@@ -1,0 +1,422 @@
+Devops is a process of improving the application delivery by using 
+  Automation
+  Quality
+  Continous monitoring
+
+
+/c/Users/MRDell/ajaz
+------------
+Git
+
+Git is a 
+  - Source code Management Tool, and
+  - Distributed version control Tool
+
+Developed by Linus torvalds
+used by 80% of developers
+
+
+Distributed version control Tool
+  Git is a distributed version control tool (as opposed to centralized). Meaning that you store the code locally 
+  on your system as well as sync it to the git site which can then be accessible to others
+
+
+- Download Git to your desktop
+- Create a account on github
+- synchronize the two. You are all set with the basic setup.
+
+
+Git comes in both CLi and GUI, plus many third party also provide GUI tools.
+The git CLi is called git-bash.
+The git GUI is called GIT GUI
+
+
+
+to check git version
+ > git --version
+
+
+After Git has been installed, you need to add a global setting via the CLi
+These global settings specify which user is using git and his/her email id which will be used for collaboration purpose
+You are basically setting the username and email id.
+
+ > git config --global user.name myname
+ > git config --global user.email myemail
+
+To check the global variables
+ > git config --list
+   type q to exit the list
+
+
+
+You can create aliases
+git config --global alias.c clear
+git config --global alias.got gitv
+
+
+
+To see if a folder is part of git repository
+
+via CLi go to the folder (using cd command)
+ > git status
+
+initially for the fist time it will not be part of the repository.
+to make it part of the repository
+ > git init
+
+this will make that folder part of the repository
+now if you type the got status command it will show that it is part of the repository
+
+
+When you make a folder part of the repository the system will create a hidden folder in that folder which contains the details of version control synchronization database. since it is a hidden you can see it with
+this command
+ > ls -a
+   ./  ../  .git/
+
+
+The git init command converts a regular folder into repository. What if we want to convert this repository back to the regular folder. To do that just delete that hidden file.
+ > rm -rf .git
+
+
+
+Github
+  is a centralized repository hub owned by Microsoft
+  Other companies also have equivalent repositories
+
+Competitors to Git   : Mercurial, Subversion
+Competitors to GitHub: GitLab, Bitbucket, SourceForge, AWS CodeCommit, Azure Repos
+
+
+
+--------- How git works at the architectural level
+
+
+                   git add                   git commit                        git push
+Working directory -----------> Staging area -------------> local repository  ------------> remote repository
+
+Does the git diff file1 command show the 
+  difference between the file in working directory and staging area or
+  difference between the file in working directory and local repository or
+  difference between the file in staging area and local repository
+
+Working Directory
+  Whatever files you create on your local laptop resides in your working directory
+  These files are untracked. Untracked means that they are not setup for version control 
+
+
+In order to track the file we need to move that file to the staging area
+ The command to move the file to staging area is 
+  > git add file1.txt
+
+This moves the file to the staging area and from here on it is trackable
+
+When executing the git add command you may get the following error
+warning: in the working copy of 'file1', LF will be replaced by CRLF the next time Git touches it
+
+You can ignore it, this refers to how the system is handling end of line characters.
+
+LF (Line Feed): This is the newline character used in Unix and Unix-like systems (Linux, macOS).
+CRLF (Carriage Return + Line Feed): This is the newline character sequence used in Windows systems.
+
+The warning means that Git has detected that the file you are adding (file1) currently has Unix-style line endings (LF). However, according to your Git configuration, the file will be converted to Windows-style line endings (CRLF) the next time Git processes the file (e.g., when you check out the file).
+
+This is handled by global settings core.autocrlf = true
+  > git config --list 
+
+
+
+  verify using the status command
+  > git status
+  
+
+If there are multiple files in your directory and you want to track all of them then
+> git add *
+
+
+To remove this file from the staging area back to working directory
+  > git rm --cached file1.txt
+
+
+
+----------Commit
+
+
+To move the file from staging area to the local repository we use the git commit command
+  > git commit -m "any message" file1.txt
+
+QQQQQ -- is the filename optional or required
+Ans   -- The filename is optional
+
+The commit command initiates the first snapshot and it is from this point on that the tracking has begun.
+
+Each commit creates a unique commit hash like for example "commit 8c04ea9afc1df71dd2b5ae80387845d0f5aa07f6"
+If a file is modified 10 times and comitted 10 times then each commit will have a unique commit hash. If you want to 
+go back to the 5th version of the file you can do that by using the commit hash of the 5th version
+
+  > git show 8c04ea9afc1df71dd2b5ae80387845d0f5aa07f6:file1
+
+You dont need to specify the whole string, just the first 4 digits is enough (as long as they are unique)
+
+
+QQQQQ -- is the -m flag optional or required.
+Ans   -- -m flag is optional
+
+To see the details of commit use the following command
+  > git log
+
+
+
+From here on any changes you make to the file, stays in working directory, you will the whole process again ie
+move to staging area and then move to local repository.
+
+----------
+
+git diff command
+
+
+
+                   git add                   git commit                        git push
+Working directory -----------> Staging area -------------> local repository  ------------> remote repository
+
+
+
+Lets say you made a change to file1 and the file is still in staging area (ie you have not issued the git add command), then you can
+see differences between the file in working directory and the one in the staging area
+  > git diff file1
+
+
+git diff file1   ------------>   Shows the changes between the working directory and the staging area
+
+git diff --staged or git diff --cached   ------------>   Shows the changes between the staging area and the local repository
+
+git diff HEAD   ------------>   Shows the changes between the working directory and the local repository
+
+
+
+
+You can also check the diff between 2 commits
+  > git diff 1234 5678 
+ where 1234 and 5678 are the commit hashes
+
+The order of hashes matter, for ex
+  > git diff a b
+  > git diff b a
+
+will show different results
+
+
+
+----------------
+git restore command
+
+  > git restore file1
+
+The git restore file1 command restores the file in the working directory to match the version in the staging area. This means that
+any changes you made to file1 in the working directory will be discarded and replaced with the version of file1 that is currently staged.
+
+
+
+
+Restore a file in the staging area to match the last commit (HEAD)
+  > git restore --staged file1
+This removes file1 from the staging area, effectively un-staging it. The working directory is not affected.
+Then you issue this command
+  > git restore file1
+you will need to issue both these commands
+
+
+
+Restore a file in both the working directory and staging area to match the last commit (HEAD):
+  > git restore --source=HEAD --staged --worktree file1
+This resets both the staging area and working directory versions of file1 to the version in the last commit. All changes to file1 since the last commit are lost.
+
+
+
+---------
+
+git show command
+
+
+to see the content of the file1 in the working directory
+  > vi file1
+
+
+to see the content of file1 in staged area
+  > git show :file1
+
+
+to see the content of file1 in local repo
+  > git show 1234:file1   where 1234 is the first 4 digits of the last commit hash
+
+
+
+=============================================
+Practice lab
+
+Create a directory called fold1
+In this directory Create a file called file2
+
+make changes to this file such that the file contents of file2 
+ in working directory
+ in staging area and
+ in local repository
+
+is different than each other.
+
+How to check the content of file2 in working directory
+How to check the content of file2 in staging area
+How to check the content of file2 in local repo
+
+
+How to discard the changes made to file2 in working directory and sync it with the file version in staging area
+
+==============================
+
+https://github.com/ajazio/MyProject.git
+
+
+--------------
+Pushing from Windows machine
+
+                   git add                   git commit                        git push
+Working directory -----------> Staging area -------------> local repository  ------------> remote repository
+
+
+Before we push to the remote repository we need to create a remote repository on github.
+
+once created, now we need to connect the local repository with the remote repository.
+
+so on the local machine issue the following command
+  > git remote add origin httplink
+
+   Where origin refers to the name you want to assign to the remote repository (you can use any name, usually people assign the name "origin") and
+   httplink is the http link to the remote repository
+
+
+How to get the httplink
+Go to github, click Code (dark green color button) and you will see the link there
+
+
+
+Now to transfer the file from local repo to remote repo
+  > git push -u origin master
+ You will be prompted for github usename and password for security purpose
+ The master here refers to the branch
+
+QQQQQQ Why didnt we give the filename when pushing.
+
+
+Pushing from linux machine
+
+The process is the same as windows machine except that when it comes to giving username and password.
+On linux it will not accept password. You will need to go to the github and generate a token and use this token when prompted for password.
+
+Goto github, settings, developer settings, personal access tokens, tokens classic (you can choose the fine-grained one also), generate new token
+
+type anything for Note
+in select scope check repos
+select expiration period
+Generate token
+
+Once you leave the window the token will no longer be visible so copy the token and save it locally in a safe place
+
+
+-------------
+
+
+Cloning
+
+Cloning allows you to do the following
+   Clone a public repo. ie copy the public repo to your local machine
+   Clone a local repo from machine 1 to machine 2 (via github)
+     Steps - save the repo to github and from there clone it to machine 2
+
+> git clone http_link
+
+
+Another option to copy someone's public repository is to use fork.
+By forking you can copy someone's public repository in your github account. This assumes that the appropriate permissions have already been assigned)
+
+
+--------
+
+Push and Pull
+
+Push - from local repo to remote repo
+Pull - from remote repo to local repo
+
+
+
+QQQQQ If I have to make changes to a file in the remote repo, can I make the change directly on the remote repo or do I have to first pull to my 
+      local repo and then make changes and then push it to the remote repo. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------------------------------
+---------------------------------
+
+
+
+Exam questions
+
+
+Q
+In the following git command 
+ > git restore file1
+
+which of the following options is correct
+
+A file in staging area is restored back to the one in working directory
+B file in local repository is restored back to the one in working directory
+C file in local repository is restored back to the one in staged area
+D file in staging area is restored back to the one in Remote repository
+
+Ans: A
+
+
+
+
+
+
+
+
+What is the difference between scripting vs configuration management
+Ans - Scripting is a procedural approach, you will need to specify all the exact steps
+      configuration management (CM) is a declarative approach. You just have to specify what has to be done and not deal
+      with the specifics of exactly how it is done.
+
+ 
